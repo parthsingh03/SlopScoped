@@ -51,5 +51,23 @@ h2 { margin-top: 2.2rem; font-size: 1.25rem; }
 .evidence li { padding: .3rem 0; border-top: 1px dashed var(--line); font-size: .94rem; }
 .pts { font-family: var(--mono); font-weight: 700; }
 .pts.pos { color: var(--accent); } .pts.neg { color: var(--green); }
+.modes { display: flex; gap: .5rem; margin-top: 1.5rem; }
+.mode { cursor: pointer; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--dim); padding: .55rem 1.1rem; font-size: .95rem; }
+.mode.active { background: #1a2130; color: var(--text); border-color: var(--accent); font-weight: 700; }
+.chart { background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 1rem 1.25rem; margin-top: 1.6rem; }
+.bands { width: 100%; border-collapse: collapse; margin: .8rem 0 1.2rem; font-size: .93rem; }
+.bands th, .bands td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.bands th { color: var(--dim); font-weight: 600; }
+.mono { font-family: var(--mono); font-weight: 700; white-space: nowrap; }
+.b-proven { color: var(--accent); } .b-high { color: var(--amber); }
+.b-mid { color: #ffd76a; } .b-low { color: var(--green); }
+.sig-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+.sig { background: #0d1119; border: 1px solid var(--line); border-radius: 8px; padding: .8rem 1rem; }
+.sig h3 { margin: .2rem 0 .5rem; font-size: 1rem; }
+.sig ul { margin: 0; padding-left: 1.1rem; font-size: .9rem; }
+.sig li { padding: .18rem 0; }
+.sig code { font-family: var(--mono); font-size: .82rem; color: #9fe8b1; }
 footer { border-top: 1px solid var(--line); padding: 1.2rem 1.5rem; color: var(--dim);
   font-size: .88rem; text-align: center; }

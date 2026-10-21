@@ -22,6 +22,10 @@
       commit history, READMEs, sampled code — and estimates how much of the profile is AI-made.
       Every point in the score is tied to evidence you can click and check yourself.
       No evidence, no accusation.</p>
+    <div class="modes">
+      <button id="mode-profile" class="mode active">👤 Whole profile</button>
+      <button id="mode-repo" class="mode">📦 Single repo</button>
+    </div>
     <div class="ask">
       <input id="user-input" type="text" placeholder="github username" autocomplete="off" spellcheck="false">
       <button id="go">Scope it →</button>
@@ -29,16 +33,74 @@
     <p id="error" class="error" hidden></p>
     <div class="examples">
       <span>Try:</span>
-      <button class="example" data-user="parthsingh03">parthsingh03</button>
-      <button class="example" data-user="sindresorhus">sindresorhus</button>
-      <button class="example" data-user="tj">tj</button>
+      <button class="example profile-example" data-user="parthsingh03">parthsingh03</button>
+      <button class="example profile-example" data-user="sindresorhus">sindresorhus</button>
+      <button class="example profile-example" data-user="tj">tj</button>
+      <button class="example repo-example" data-repo="parthsingh03/AirGap" hidden>parthsingh03/AirGap</button>
+      <button class="example repo-example" data-repo="parthsingh03/TrailHead" hidden>parthsingh03/TrailHead</button>
+      <button class="example repo-example" data-repo="tj/commander.js" hidden>tj/commander.js</button>
     </div>
     <div class="swap-tip">
       <h2>The URL swap</h2>
-      <p>Take any GitHub profile and swap the domain:</p>
+      <p>Take any GitHub profile — or a single repo — and swap the domain:</p>
       <code class="swap">github.com/parthsingh03 &nbsp;→&nbsp; <b>parthsingh03.github.io/SlopScoped</b>/parthsingh03</code>
-      <p class="fine">Public profiles only. Forks are excluded from the score — a fork is
-        someone else's work. At most the 12 largest non-fork repos are deep-scanned.</p>
+      <code class="swap">github.com/parthsingh03/AirGap &nbsp;→&nbsp; <b>parthsingh03.github.io/SlopScoped</b>/parthsingh03/AirGap</code>
+      <p class="fine">Public profiles and repos only. In profile mode, forks are excluded
+        from the score — a fork is someone else's work. At most the 12 largest
+        non-fork repos are deep-scanned.</p>
+    </div>
+    <div class="chart">
+      <h2>How the scoring works</h2>
+      <p class="fine">Every repo is scored 0–100 purely from evidence in its public record.
+        No evidence, no points. This is the whole chart — nothing is hidden.</p>
+      <table class="bands">
+        <tr><th>Score</th><th>Verdict</th><th>What it means</th></tr>
+        <tr><td class="mono b-proven">proof</td><td><b>Proven AI-automated</b></td><td>An automation script in the repo tells an AI agent to generate code and push it. Case closed.</td></tr>
+        <tr><td class="mono b-high">80–100</td><td><b>Highly likely AI-automated</b></td><td>Multiple strong signals stack up — dumps, batch commits, templates.</td></tr>
+        <tr><td class="mono b-high">50–79</td><td><b>Likely AI-generated</b></td><td>Clear AI-generation patterns, short of a smoking gun.</td></tr>
+        <tr><td class="mono b-mid">25–49</td><td><b>AI-assisted</b></td><td>Some AI tooling traces — agent folders, a few template signals.</td></tr>
+        <tr><td class="mono b-low">0–24</td><td><b>No strong AI evidence</b></td><td>The public record shows little to nothing. <i>Not</i> "proven human".</td></tr>
+      </table>
+      <div class="sig-grid">
+        <div class="sig">
+          <h3>🔫 Hard evidence</h3>
+          <ul>
+            <li>Automation script (AI generates + git-pushes) → <b>proven, floor 95</b></li>
+            <li><code>.claude/</code> or <code>.agents/</code> folder committed → <b>+35</b></li>
+            <li>Prompt files committed → <b>+20</b></li>
+            <li><code>CLAUDE.md</code> / <code>.cursorrules</code> → <b>+15</b></li>
+          </ul>
+        </div>
+        <div class="sig">
+          <h3>📦 Commit behaviour <span class="fine">(max +35)</span></h3>
+          <ul>
+            <li>Whole repo landed in ≤2 commits → <b>+10</b></li>
+            <li>One message repeated for &gt;50% of commits → <b>up to +15</b></li>
+            <li>"Add 5 new tools" batch messages ≥20% → <b>+15</b></li>
+            <li>All commits squeezed into ≤3 days, 30+ files → <b>+10</b></li>
+            <li>Almost zero fix/debug commits → <b>+5</b></li>
+          </ul>
+        </div>
+        <div class="sig">
+          <h3>🧬 Code &amp; README <span class="fine">(max +30)</span></h3>
+          <ul>
+            <li>Identical template opening across sampled files → <b>+10</b></li>
+            <li>Heavy generic-comment padding → <b>+10</b></li>
+            <li>README with 4+ AI tells (buzzwords, emoji headers) → <b>+10</b></li>
+            <li>100+ code files in one flat pile → <b>+10</b></li>
+          </ul>
+        </div>
+        <div class="sig">
+          <h3>🧑 Human signals <span class="fine">(subtract)</span></h3>
+          <ul>
+            <li>Fix/debug commits in a plausible 15–60% band → <b>−10</b></li>
+            <li>History spanning 90+ days with varied messages → <b>−10</b></li>
+          </ul>
+          <p class="fine">Profile score = repo scores weighted by repo size,
+            shown as a ±10 range. Forks never count.</p>
+        </div>
+      </div>
+      <p class="fine">Full rules with exact thresholds: <a href="SCORING.md">SCORING.md</a>.</p>
     </div>
     <div class="honest">
       <h2>Honest limits</h2>

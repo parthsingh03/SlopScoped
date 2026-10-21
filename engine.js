@@ -66,7 +66,7 @@
     /* ---- commit behaviour (max +35) ---- */
     var commits = r.commits || [];
     var commitPts = 0;
-    if (commits.length <= 2 && codeFiles >= 20) {
+    if (commits.length <= 2 && codeFiles >= 20 && r.commitsFetched !== false) {
       commitPts += 10;
       ev.push({ points: 10, label: 'Whole repo (' + codeFiles + ' code files) landed in ' + Math.max(1, commits.length) + ' commit(s) — no visible development history' });
     }

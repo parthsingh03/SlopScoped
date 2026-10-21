@@ -5,7 +5,9 @@ How much of a GitHub profile is actually AI?
 Paste a username and SlopScoped reads the public record — file trees,
 commit history, READMEs, a sample of the code — and estimates how much
 of the profile is AI-made. Every point in the score is tied to evidence
-you can click and check yourself.
+you can click and check yourself. You can also scope a **single repo**
+on its own, and the full scoring chart is printed on the front page —
+no hidden formula.
 
 **Live:** https://parthsingh03.github.io/SlopScoped/
 
@@ -14,7 +16,8 @@ you can click and check yourself.
 Take any GitHub profile and swap the domain:
 
 ```
-github.com/parthsingh03  →  parthsingh03.github.io/SlopScoped/parthsingh03
+github.com/parthsingh03        →  parthsingh03.github.io/SlopScoped/parthsingh03
+github.com/parthsingh03/AirGap  →  parthsingh03.github.io/SlopScoped/parthsingh03/AirGap
 ```
 
 ## What it looks for
