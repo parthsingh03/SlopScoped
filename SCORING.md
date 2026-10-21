@@ -19,7 +19,7 @@ suspicious automation files (`.bat`/`.sh` scripts, prompt files).
 
 ### Hard evidence (can prove automation)
 - An automation script whose content tells an AI/agent to generate code
-  AND commit/push it (e.g. `run_daily_tools.bat`) → **score floor 95,
+  AND commit/push it → **score floor 95,
   verdict PROVEN AI-AUTOMATED**.
 - `.claude/` or `.agents/` directory committed → +35
 - Prompt files (`prompt*.txt/md`, `prompts/`) → +20

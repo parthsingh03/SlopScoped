@@ -14,7 +14,7 @@ you can click and check yourself.
 Take any GitHub profile and swap the domain:
 
 ```
-github.com/Ayush442842q  →  parthsingh03.github.io/SlopScoped/Ayush442842q
+github.com/parthsingh03  →  parthsingh03.github.io/SlopScoped/parthsingh03
 ```
 
 ## What it looks for
