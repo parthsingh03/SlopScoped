@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SlopScoped — how much of a GitHub profile is actually AI?</title>
+<meta name="description" content="Paste a GitHub username and get an evidence-based estimate of how much of the profile is AI-made — automation scripts, commit dumps, template code — with every point linked to its proof.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./">🔬 SlopScoped</a>
+  <span class="tag">how much of that profile is actually AI?</span>
+</header>
+
+<main>
+  <!-- landing -->
+  <section id="landing">
+    <h1>Some profiles are built.<br>Some are <span class="stamp-inline">generated</span>.</h1>
+    <p class="lede">Paste a GitHub username. SlopScoped reads the public record — file trees,
+      commit history, READMEs, sampled code — and estimates how much of the profile is AI-made.
+      Every point in the score is tied to evidence you can click and check yourself.
+      No evidence, no accusation.</p>
+    <div class="ask">
+      <input id="user-input" type="text" placeholder="github username" autocomplete="off" spellcheck="false">
+      <button id="go">Scope it →</button>
+    </div>
+    <p id="error" class="error" hidden></p>
+    <div class="examples">
+      <span>Try:</span>
+      <button class="example" data-user="Ayush442842q">Ayush442842q</button>
+      <button class="example" data-user="parthsingh03">parthsingh03</button>
+      <button class="example" data-user="tj">tj</button>
+    </div>
+    <div class="swap-tip">
+      <h2>The URL swap</h2>
+      <p>Take any GitHub profile and swap the domain:</p>
+      <code class="swap">github.com/Ayush442842q &nbsp;→&nbsp; <b>parthsingh03.github.io/SlopScoped</b>/Ayush442842q</code>
+      <p class="fine">Public profiles only. Forks are excluded from the score — a fork is
+        someone else's work. At most the 12 largest non-fork repos are deep-scanned.</p>
+    </div>
+    <div class="honest">
+      <h2>Honest limits</h2>
+      <p>This is an <b>estimator, not a lie detector</b>. It catches what the public record
+        shows: automation pipelines, batch-generation commit patterns, template code.
+        A low score means <b>no strong public evidence</b> — not "proven human".
+        Careful AI-assisted work, iterated locally and pushed finished, leaves few traces,
+        and this tool will not invent traces that aren't there. Read
+        <a href="SCORING.md">how the scoring works</a>.</p>
+    </div>
+  </section>
+
+  <!-- scanning -->
+  <section id="scanning" hidden>
+    <h1>Scoping <span id="scan-user"></span>…</h1>
+    <pre id="scan-log" class="scanlog"></pre>
+  </section>
+
+  <!-- result -->
+  <section id="result" hidden>
+    <p class="meta"><a href="./">← scope another profile</a></p>
+    <h1 id="profile-title"></h1>
+    <div class="score-hero">
+      <div class="score-num"><span id="score-num">0</span><span class="pct">%</span></div>
+      <div class="score-side">
+        <p class="score-label">estimated AI-made<br><span id="score-range" class="meta"></span></p>
+        <p id="profile-verdict" class="verdict"></p>
+      </div>
+    </div>
+    <p id="profile-meta" class="meta"></p>
+    <h2>Repo by repo</h2>
+    <div id="repo-cards"></div>
+    <div class="honest">
+      <p><b>Remember:</b> a low score means no strong public evidence was found — not proof
+        of human authorship. Scores reward evidence, not suspicion.
+        <a href="SCORING.md">Full scoring rules</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>SlopScoped — an evidence-based estimator for AI-made GitHub profiles. Estimates, not verdicts on people.</p>
+</footer>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

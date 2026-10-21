@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SlopScoped — scoping…</title>
+<script>
+  /* SPA fallback for GitHub Pages:
+     /SlopScoped/<username> -> /SlopScoped/?u=<username> (case preserved) */
+  (function () {
+    var parts = location.pathname.split('/').filter(Boolean);
+    var base = '';
+    if (parts.length && parts[0].toLowerCase() === 'slopscoped') { base = '/' + parts[0]; parts.shift(); }
+    var user = parts.length ? decodeURIComponent(parts[0]) : '';
+    location.replace(base + '/?u=' + encodeURIComponent(user));
+  })();
+</script>
+</head>
+<body><p>Scoping…</p></body>
+</html>
