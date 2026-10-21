@@ -82,10 +82,43 @@
         commitPts += p1;
         ev.push({ points: p1, label: 'One commit message repeated for ' + Math.round(repeatRatio * 100) + '% of commits ("' + topMsg.slice(0, 60) + '")' });
       }
-      var batch = msgs.filter(function (m) { return /(add|generate|create|update)\s+(\d+|five|ten)\s+(new\s+)?(tools|files|projects|programs|apps|utilities|scripts)/.test(m) || /^generated?\s+\d+/.test(m); });
-      if (msgs.length && batch.length / msgs.length >= 0.2) {
-        commitPts += 15;
-        ev.push({ points: 15, label: Math.round(batch.length / msgs.length * 100) + '% of commits are batch-generation messages ("add/generate N tools")' });
+      /* Generalized batch-generation pattern — NOT tied to any one repo's
+         wording: a creation verb + a quantity + a plural thing being made,
+         repeated across many commits (any domain: tools, components,
+         icons, pages, modules...). */
+      if (msgs.length >= 10) {
+        var batch = msgs.filter(function (m) {
+          return /\b(add|generate|create|build|upload|introduce|implement)\b/.test(m)
+            && /(\b\d+\b|\b(batch|multiple|bulk|five|ten|three|two)\b)/.test(m)
+            && /\b(tools|files|components|modules|scripts|programs|utilities|apps|pages|icons|features|functions|projects|templates|examples|items|assets|images|models|tests|endpoints|commands|plugins|widgets|levels|questions)\b/.test(m);
+        });
+        if (batch.length / msgs.length >= 0.25) {
+          commitPts += 15;
+          ev.push({ points: 15, label: Math.round(batch.length / msgs.length * 100) + '% of commits follow a batch-generation pattern (e.g. "' + batch[0].slice(0, 60) + '") — a pipeline making N things per run' });
+        }
+        /* One commit template with small cosmetic variations — machines
+           reuse a template; humans reword organically. Numbers, feat:
+           prefixes, "(Daily Update)" suffixes etc. are stripped away. */
+        var norm = function (m) {
+          return m.replace(/^(feat|fix|chore|docs|style|refactor|test|build|ci)(\([^)]*\))?:\s*/, '')
+            .replace(/\d+/g, '#').replace(/\([^)]*\)/g, '')
+            .replace(/\.(md|txt|json)\b/g, '').replace(/[^a-z# ]/g, ' ')
+            .replace(/\s+/g, ' ').trim();
+        };
+        var templates = {};
+        msgs.forEach(function (m, i) {
+          var t = norm(m);
+          if (!templates[t]) templates[t] = { count: 0, variants: {} };
+          templates[t].count++; templates[t].variants[m] = true;
+        });
+        var topT = '', topTC = 0, topTV = 0;
+        Object.keys(templates).forEach(function (t) {
+          if (templates[t].count > topTC) { topTC = templates[t].count; topT = t; topTV = Object.keys(templates[t].variants).length; }
+        });
+        if (topTC / msgs.length >= 0.2 && topTV >= 3 && repeatRatio <= 0.5) {
+          commitPts += 10;
+          ev.push({ points: 10, label: 'One commit template accounts for ' + Math.round(topTC / msgs.length * 100) + '% of commits in ' + topTV + ' near-identical variants ("' + topT.slice(0, 60) + '")' });
+        }
       }
       var days = {};
       commits.forEach(function (c) { days[(c.date || '').slice(0, 10)] = true; });
@@ -162,7 +195,7 @@
       var topLevel = paths.filter(function (p) { return p.indexOf('/') === -1 && isCode(p); }).length;
       if (topLevel / codeFiles > 0.7) {
         patternPts += 10;
-        ev.push({ points: 10, label: codeFiles + ' code files in a flat layout — bulk-generated utility pile pattern' });
+        ev.push({ points: 10, label: codeFiles + ' code files in a flat layout — hundreds of files in one pile is a bulk-generation pattern' });
       }
     }
     score += Math.min(30, patternPts);

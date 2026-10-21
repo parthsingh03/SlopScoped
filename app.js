@@ -30,6 +30,34 @@
     if (!res.ok) throw new Error('GitHub API error ' + res.status + ' on ' + path);
     return res.json();
   }
+  /* ---- result cache: repeat scans within 30 min cost zero API calls ---- */
+  var CACHE_MS = 30 * 60 * 1000;
+  function loadCache(k) {
+    try { var c = JSON.parse(localStorage.getItem('slop:' + k) || 'null'); if (c && Date.now() - c.t < CACHE_MS) return c; } catch (e) {}
+    return null;
+  }
+  function saveCache(k, data) {
+    try { localStorage.setItem('slop:' + k, JSON.stringify({ t: Date.now(), data: data })); } catch (e) {}
+  }
+  function showCacheNote(t, rescanFn) {
+    var el = $('cache-note');
+    el.hidden = false;
+    el.textContent = 'Cached result from ' + new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' — repeat scans are free for 30 minutes. ';
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'mini-btn'; b.textContent = 'Rescan now';
+    b.addEventListener('click', rescanFn);
+    el.appendChild(b);
+  }
+
+  /* ---- GitHub API meter (the /rate_limit endpoint itself is free) ---- */
+  async function updateRate() {
+    try {
+      var r = await fetch(GH + '/rate_limit').then(function (x) { return x.json(); });
+      var c = r.resources.core, el = $('rate-info');
+      if (el && c) el.textContent = 'GitHub API: ' + c.remaining + ' of ' + c.limit + ' calls left this hour · resets ' + new Date(c.reset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '. A profile scan uses about 25 calls; repeat scans within 30 minutes use none.';
+    } catch (e) {}
+  }
+
   async function raw(owner, repo, branch, path) {
     try {
       var res = await fetch(RAW + '/' + owner + '/' + repo + '/' + branch + '/' + path.split('/').map(encodeURIComponent).join('/'));
@@ -75,7 +103,12 @@
     $('scan-log').textContent = '';
   }
 
-  async function scan(username) {
+  async function scan(username, force) {
+    var key = 'u:' + username.toLowerCase();
+    if (!force) {
+      var c = loadCache(key);
+      if (c) { renderProfile(c.data); showCacheNote(c.t, function () { scan(username, true); }); return; }
+    }
     beginScan(username);
     try {
       log('fetching repos of ' + username + ' …');
@@ -92,14 +125,23 @@
         log('  → ' + out.score + '/100 · ' + out.verdict);
         results.push(out);
       }
-      renderProfile(window.SlopEngine.analyzeProfile(username, results, forks.length));
+      var profile = window.SlopEngine.analyzeProfile(username, results, forks.length);
+      saveCache(key, profile);
+      renderProfile(profile);
+      updateRate();
     } catch (err) {
       scanning.hidden = true; landing.hidden = false;
       showError(err.message || String(err));
+      updateRate();
     }
   }
 
-  async function scanRepo(owner, repoName) {
+  async function scanRepo(owner, repoName, force) {
+    var key = 'r:' + (owner + '/' + repoName).toLowerCase();
+    if (!force) {
+      var c = loadCache(key);
+      if (c) { renderSingle(owner, c.data); showCacheNote(c.t, function () { scanRepo(owner, repoName, true); }); return; }
+    }
     beginScan(owner + '/' + repoName);
     try {
       log('fetching repo ' + owner + '/' + repoName + ' …');
@@ -108,10 +150,13 @@
       if (!meta.size) throw new Error('That repo looks empty — nothing to scope.');
       var out = await scopeOne(owner, meta);
       log('  → ' + out.score + '/100 · ' + out.verdict);
+      saveCache(key, out);
       renderSingle(owner, out);
+      updateRate();
     } catch (err) {
       scanning.hidden = true; landing.hidden = false;
       showError(err.message || String(err));
+      updateRate();
     }
   }
 
@@ -162,7 +207,8 @@
   }
 
   function showResult(title, score, rangeText, verdict, proven, metaText, cards) {
-    scanning.hidden = true; result.hidden = false;
+    scanning.hidden = true; landing.hidden = true; result.hidden = false;
+    $('cache-note').hidden = true; $('cache-note').textContent = '';
     $('profile-title').textContent = title;
     $('score-num').textContent = score;
     $('score-range').textContent = rangeText;
@@ -238,6 +284,8 @@
       start();
     });
   });
+
+  updateRate();
 
   var params = new URLSearchParams(location.search);
   var u = params.get('u'), rParam = params.get('r');

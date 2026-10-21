@@ -28,8 +28,15 @@ suspicious automation files (`.bat`/`.sh` scripts, prompt files).
 ### Commit behaviour (max +35)
 - Whole repo (≥20 code files) landed in ≤2 commits → +10
 - One commit message repeated for >50% of commits → up to +15
-- Batch-generation messages ("Add 5 new tools", "Generate 10 files")
-  in ≥20% of commits → +15
+- Batch-generation pattern in ≥25% of commits → +15. Deliberately
+  generic (learned the hard way — v1 hard-coded one repo's wording,
+  which was overfitting): a creation verb (add/generate/create/build/
+  upload/introduce/implement) + a quantity (a number, or batch/
+  multiple/bulk) + a plural thing being made (tools, files,
+  components, modules, icons, pages, features, … — any domain)
+- One commit template in ≥3 near-identical variants making up ≥20%
+  of commits → +10 (numbers, `feat:` prefixes and suffixes stripped
+  before comparing — pipelines reuse templates, humans reword)
 - ≥70% of commits land on ≤3 distinct days while the repo has >30
   files → +10
 - Almost no fix/debug commits (<2% of ≥20 commits) → +5

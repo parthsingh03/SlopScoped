@@ -40,15 +40,9 @@
       <button class="example repo-example" data-repo="parthsingh03/TrailHead" hidden>parthsingh03/TrailHead</button>
       <button class="example repo-example" data-repo="tj/commander.js" hidden>tj/commander.js</button>
     </div>
-    <div class="swap-tip">
-      <h2>The URL swap</h2>
-      <p>Take any GitHub profile — or a single repo — and swap the domain:</p>
-      <code class="swap">github.com/parthsingh03 &nbsp;→&nbsp; <b>parthsingh03.github.io/SlopScoped</b>/parthsingh03</code>
-      <code class="swap">github.com/parthsingh03/AirGap &nbsp;→&nbsp; <b>parthsingh03.github.io/SlopScoped</b>/parthsingh03/AirGap</code>
-      <p class="fine">Public profiles and repos only. In profile mode, forks are excluded
-        from the score — a fork is someone else's work. At most the 12 largest
-        non-fork repos are deep-scanned.</p>
-    </div>
+    <p class="fine">Public profiles and repos only. In profile mode, forks are excluded
+      from the score — a fork is someone else's work. At most the 12 largest
+      non-fork repos are deep-scanned.</p>
     <div class="chart">
       <h2>How the scoring works</h2>
       <p class="fine">Every repo is scored 0–100 purely from evidence in its public record.
@@ -76,7 +70,8 @@
           <ul>
             <li>Whole repo landed in ≤2 commits → <b>+10</b></li>
             <li>One message repeated for &gt;50% of commits → <b>up to +15</b></li>
-            <li>"Add 5 new tools" batch messages ≥20% → <b>+15</b></li>
+            <li>Batch-generation pattern ≥25% of commits — a creation verb + a quantity + things being made, in any wording → <b>+15</b></li>
+            <li>One commit template in many near-identical variants ≥20% → <b>+10</b></li>
             <li>All commits squeezed into ≤3 days, 30+ files → <b>+10</b></li>
             <li>Almost zero fix/debug commits → <b>+5</b></li>
           </ul>
@@ -131,6 +126,7 @@
       </div>
     </div>
     <p id="profile-meta" class="meta"></p>
+    <p id="cache-note" class="meta" hidden></p>
     <h2>Repo by repo</h2>
     <div id="repo-cards"></div>
     <div class="honest">
@@ -143,6 +139,7 @@
 
 <footer>
   <p>SlopScoped — an evidence-based estimator for AI-made GitHub profiles. Estimates, not verdicts on people.</p>
+  <p class="meta" id="rate-info"></p>
 </footer>
 <script src="engine.js"></script>
 <script src="app.js"></script>
